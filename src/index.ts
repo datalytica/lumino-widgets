@@ -27,47 +27,69 @@ import {
 } from './dockpanel';
 
 import {
-  DockPanelRenderer, ContentWidget
-} from './dockpanelrenderer';
+  createDashboard, serializeDashboard, restoreDashboard
+} from './serialize'
 
 
 import '../style/index.css';
 
 
-function createMenu(commands: CommandRegistry): Menu {
-  let root = new Menu({ commands });
-  //root.addItem({ command: 'prism:new-tab' });
-  root.addItem({ command: 'prism:lock' });
-  //root.addItem({ command: 'prism:publish' });
-
-  return root;
-}
-
-
-function createDashboard(): DockPanel {
-  let renderer = new DockPanelRenderer();
-  let dock = new DockPanel({
-    renderer: renderer,
-    spacing: 6
-  });
-  renderer.dock = dock;
-  let w = new ContentWidget();
-  w.title.label = 'Test1';
-  dock.addWidget(w);
-  return dock;
-}
-
-
 function main(): void {
 
-  const commands = new CommandRegistry();
+  let commands = new CommandRegistry();
 
-  commands.addCommand('prism:new-tab', {
-    label: 'New Tab',
+  let main = new DashboardPanel();
+  main.id = 'main-widget';
+
+  commands.addCommand('prism:save', {
+    label: 'Save Workspace',
     mnemonic: 0,
-    caption: 'Open a new tab',
     execute: () => {
-      console.log('New Tab');
+      let config = serializeDashboard(main);
+
+      let blob = new Blob([ JSON.stringify(config, null, 2)], {
+        type: 'application/octet-stream'
+      });
+      let url = URL.createObjectURL(blob);
+      let link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'workspace.psx');
+      let event = document.createEvent('MouseEvent');
+      event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+      link.dispatchEvent(event);
+    },
+  });
+
+  commands.addCommand('prism:load', {
+    label: 'Load Workspace',
+    mnemonic: 0,
+    execute: () => {
+
+      if (window.Blob) {
+        let input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', '.psx');
+        input.setAttribute('style', 'display: none;');
+        let body = document.getElementsByTagName('body')[0];
+        body.appendChild(input);
+        input.addEventListener('change', (event: Event) => {
+          body.removeChild(input);
+          let file = (<HTMLInputElement> event.srcElement).files![0];
+
+          if (file) {
+            let f = new FileReader();
+            f.addEventListener('load', (event: Event) => {
+              let contents = (<FileReader> event.target).result as string;
+              let config = JSON.parse(contents);
+              restoreDashboard(config, main);
+            });
+            f.readAsText(file);
+          }
+        });
+        input.click();
+      } else {
+        alert("The File APIs are not fully supported in this browser");
+      }
     }
   });
 
@@ -94,21 +116,23 @@ function main(): void {
     }
   });
 
-  let menu1 = createMenu(commands);
-  menu1.title.label = 'File';
-  menu1.title.mnemonic = 0;
+  let menu = new Menu({ commands });
+  menu.addItem({ command: 'prism:save' });
+  menu.addItem({ command: 'prism:load' });
+  menu.addItem({ command: 'prism:lock' });
+  //menu.addItem({ command: 'prism:publish' });
+  menu.title.label = 'File';
+  menu.title.mnemonic = 0;
 
   let bar = new MenuBar();
-  bar.addMenu(menu1);
+  bar.addMenu(menu);
   bar.id = 'menubar';
-
-  let main = new DashboardPanel();
-  main.id = 'main-widget';
 
   main.addWidget(createDashboard());
 
   main.addTabRequested.connect(() => {
     main.addWidget(createDashboard());
+    main.currentIndex = main.widgets.length - 1;
   });
 
   window.onresize = () => { main.update(); };

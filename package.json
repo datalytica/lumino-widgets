@@ -7,6 +7,7 @@
     "clean": "rimraf build"
   },
   "dependencies": {
+    "@lumino/algorithm": "^1.2.3",
     "@lumino/commands": "^1.10.1",
     "@lumino/default-theme": "^0.2.4",
     "@lumino/dragdrop": "^1.5.1",
