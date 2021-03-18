@@ -1,0 +1,20 @@
+*.suo
+*.user
+.DS_Store
+dist
+lib
+types
+node_modules
+build
+review/api/temp
+*.tsbuildinfo
+
+# jetbrains ide stuff
+*.iml
+.idea/
+
+# ms ide stuff
+*.code-workspace
+.history
+.vscode
+
