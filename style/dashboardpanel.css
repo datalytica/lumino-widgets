@@ -1,0 +1,118 @@
+/*-----------------------------------------------------------------------------
+| Copyright (c) 2020, Naveen-Michaud-Agrawal
+|
+| Distributed under the terms of the BSD 3-Clause License.
+|
+| The full license is in the file LICENSE, distributed with this software.
+|----------------------------------------------------------------------------*/
+
+.lm-DashboardPanel.lm-TabBar {
+  min-height: 30px;
+  max-height: 30px;
+}
+
+
+.lm-TabPanel-stackedPanel {
+    padding: 6px;
+}
+
+
+.lm-DashboardPanel .lm-TabBar-content {
+  min-width: 0;
+  min-height: 0;
+  align-items: flex-end;
+  border-bottom: 1px solid #C0C0C0;
+}
+
+
+.lm-DashboardPanel .lm-TabBar-tab {
+  padding: 0px 1px 0px 5px;
+  color: #959595;
+  background: #E5E5E5;
+  border: 1px solid #BDC3C7;
+  border-bottom: none;
+  font: 13px Helvetica, Arial, sans-serif;
+  /*flex: 0 1 155px;*/
+  min-height: 24px;
+  max-height: 24px;
+  min-width: 85px;
+  margin-left: -1px;
+  line-height: 24px;
+}
+
+.lm-DashboardPanel .lm-TabBar-button {
+  padding: 0px 10px 0px 10px;
+  color: #BDC3C7;
+  font-family: "Material Icons";
+  line-height: 24px;
+}
+
+.lm-DashboardPanel .lm-TabBar-button:hover {
+  font-weight: 900;
+  color: #959595;
+}
+
+.lm-DashboardPanel .lm-TabBar-button.lm-mod-hidden {
+  visibility: hidden;
+}
+
+.lm-DashboardPanel .lm-TabBar-tab.lm-mod-current {
+  background: white;
+  font-weight: 600;
+}
+
+
+.lm-DashboardPanel .lm-TabBar-tab:hover:not(.lm-mod-current) {
+  background: #F0F0F0;
+}
+
+
+.lm-DashboardPanel .lm-TabBar-tab:first-child {
+  margin-left: 8px;
+}
+
+
+.lm-DashboardPanel .lm-TabBar-tab.lm-mod-current {
+  min-height: 28px;
+  max-height: 28px;
+  transform: translateY(1px);
+}
+
+.lm-DashboardPanel .lm-TabBar-tabLabel {
+  text-align: center;
+  text-overflow: ellipsis;
+  /*flex-grow: 1;*/
+  margin: 0px 20px 0px 20px;
+}
+
+.lm-DashboardPanel .lm-TabBar-tabLabel.unset {
+  color: #D5D5D5;
+}
+
+.lm-DashboardPanel .lm-TabBar-tabInput {
+  user-select: all;
+  width: 100%;
+  box-sizing : border-box;
+  text-align: center;
+  background: inherit;
+  /*border: 1px solid #C0C0C0;*/
+  border: 0px;
+  outline: none;
+  color: #959595;
+  font: 14px Helvetica, Arial, sans-serif;
+}
+
+.lm-TabBar-tab > .lm-TabBar-tabCloseIcon
+{
+  margin-right: 4px;
+  font-family: 'Material Icons';
+  font-size: 16px;
+  color: #BDC3C7;
+  cursor: auto;
+}
+
+
+.lm-TabBar-tab > .lm-TabBar-tabCloseIcon:hover
+{
+  color: #757575;
+}

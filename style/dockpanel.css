@@ -1,0 +1,186 @@
+/*-----------------------------------------------------------------------------
+| Copyright (c) 2014-2017, PhosphorJS Contributors
+|
+| Distributed under the terms of the BSD 3-Clause License.
+|
+| The full license is in the file LICENSE, distributed with this software.
+|----------------------------------------------------------------------------*/
+
+.lm-DockPanel-overlay {
+  background: #9ACCF3;
+  border: 2px solid #9ACCF3;
+  opacity: 0.8;
+  /*background: rgba(255, 255, 255, 0.6);
+  border: 1px dashed black;*/
+  transition-property: top, left, right, bottom;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+.lm-DockPanel-widget {
+  min-width: 300px;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  /*padding: 0px;*/
+  border: 1px solid #BDC3C7;
+  /*border-top: none;*/
+  background: white;
+  /*box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);*/
+}
+
+
+/**
+ * Tab Bar specialization.
+ */
+
+.lm-DockPanel-tabBar .lm-TabBar-tab {
+  flex: 1 1 auto;
+  border: 1px solid #BDC3C7;
+  border-bottom: none;
+  padding: 0px 1px 0px 5px;
+  color: #959595;
+  background: #F5F7F7;
+  font: 14px Helvetica, Arial, sans-serif;
+  min-height: 20px;
+  max-height: 20px;
+  min-width: 35px;
+  margin-left: -1px;
+  line-height: 20px;
+}
+
+
+.lm-DockPanel-tabBar.lm-TabBar {
+  min-height: 24px;
+  max-height: 24px;
+}
+
+.lm-DockPanel-tabBar .lm-TabBar-tab.lm-mod-closable {
+  cursor: grab;
+}
+
+.lm-DockPanel-tabBar .lm-TabBar-tab.lm-mod-current {
+  min-height: 23px;
+  max-height: 23px;
+  transform: translateY(1px);
+}
+
+
+.lm-DockPanel-tabBar .lm-TabBar-content {
+  min-width: 0;
+  min-height: 0;
+  align-items: flex-end;
+  border-bottom: 1px solid #C0C0C0;
+}
+
+
+.lm-DockPanel-tabBar .lm-TabBar-tab.lm-mod-current {
+  background: #F5F7F7;
+}
+
+
+.lm-DockPanel-tabBar .lm-TabBar-tab:hover:not(.lm-mod-current) {
+  background: #F0F0F0;
+}
+
+
+.lm-DockPanel-tabBar .lm-TabBar-tab:first-child {
+  margin-left: 0;
+}
+
+.lm-TabBar-tabIcon,
+.lm-TabBar-tabLabel,
+.lm-TabBar-tabCloseIcon,
+.lm-TabBar-tabMaximizeIcon,
+.lm-TabBar-tabCloneIcon,
+.lm-TabBar-tabFilterIcon,
+.lm-TabBar-tabConfigureIcon,
+.lm-TabBar-tabMenuIcon
+{
+  display: inline-block;
+}
+
+.lm-DockPanel-tabBar .lm-TabBar-tabLabel {
+  text-align: center;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  margin: 0px 20px 0px 20px;
+}
+
+.lm-DockPanel-tabBar .lm-TabBar-tabLabel.unset {
+  color: #C9C9C9;
+}
+
+.lm-DockPanel-tabBar .lm-mod-closable .lm-TabBar-tabLabel {
+  cursor: text;
+}
+
+.lm-DockPanel-tabBar .lm-TabBar-tabSpacer {
+  flex-grow: 0;
+}
+
+.lm-DockPanel-tabBar .lm-mod-closable .lm-TabBar-tabSpacer {
+  cursor: grab;
+}
+
+.lm-DockPanel-tabBar .lm-TabBar-tabInput {
+  user-select: all;
+  width: 100%;
+  box-sizing : border-box;
+  text-align: center;
+  /*border: 1px solid #C0C0C0;*/
+  border: 0px;
+  outline: none;
+  font-size: 1em;
+  color: #959595;
+  background: #F5F7F7;
+  font: 14px Helvetica, Arial, sans-serif;
+}
+
+.lm-TabBar-tab > .lm-TabBar-tabCloseIcon,
+.lm-TabBar-tab > .lm-TabBar-tabMaximizeIcon,
+.lm-TabBar-tab > .lm-TabBar-tabConfigureIcon,
+.lm-TabBar-tab > .lm-TabBar-tabCloneIcon,
+.lm-TabBar-tab > .lm-TabBar-tabFilterIcon,
+.lm-TabBar-tab > .lm-TabBar-tabMenuIcon
+{
+  margin-right: 4px;
+  font-family: 'Material Icons';
+  font-size: 16px;
+  color: #BDC3C7;
+  cursor: auto;
+}
+
+
+.lm-TabBar-tab > .lm-TabBar-tabCloseIcon:hover,
+.lm-TabBar-tab > .lm-TabBar-tabMaximizeIcon:hover,
+.lm-TabBar-tab > .lm-TabBar-tabConfigureIcon:hover,
+.lm-TabBar-tab > .lm-TabBar-tabFilterIcon:hover,
+.lm-TabBar-tab > .lm-TabBar-tabCloneIcon:hover,
+.lm-TabBar-tab > .lm-TabBar-tabMenuIcon:hover {
+  color: #757575;
+}
+
+
+.lm-TabBar-tab.lm-mod-drag-image {
+  background: white;
+  font: 14px Helvetica, Arial, sans-serif;
+  min-height: 23px;
+  max-height: 23px;
+  min-width: 125px;
+  flex: 1 1 auto;
+  border: none;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  transform: translateX(-40%) translateY(-58%);
+  padding: 0px 1px 0px 5px;
+  color: #959595;
+  margin: 4px 0px;
+  line-height: 20px
+}
+
+.lm-TabBar-tab.lm-mod-drag-image .lm-TabBar-tabLabel {
+  text-align: center;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  margin: 0px 10px 0px 10px;
+}
