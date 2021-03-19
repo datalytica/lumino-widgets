@@ -109,10 +109,34 @@ function main(): void {
   });
 
   commands.addCommand('prism:publish', {
-    label: 'Publish to server',
+    label: 'Publish',
     mnemonic: 2,
-    caption: 'Publish to server',
+    caption: 'Publish to test server',
     execute: () => {
+
+      let config = serializeDashboard(main);
+      let url = 'https://jsonblob.com/api/jsonBlob';
+
+      fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        method: "POST",
+        body: JSON.stringify(config, null)
+      })
+      .then(response => {
+        let location = response.headers.get('Location') || '';
+        let idx = location.search(url);
+        if (idx != -1) {
+          let result = location.slice(url.length);
+          history.pushState(null, "", document.location.pathname + '#' + result);
+        }
+      })
+      .catch(res => {
+        console.log(res);
+      });
+
     }
   });
 
@@ -120,7 +144,7 @@ function main(): void {
   menu.addItem({ command: 'prism:save' });
   menu.addItem({ command: 'prism:load' });
   menu.addItem({ command: 'prism:lock' });
-  //menu.addItem({ command: 'prism:publish' });
+  menu.addItem({ command: 'prism:publish' });
   menu.title.label = 'File';
   menu.title.mnemonic = 0;
 
@@ -128,19 +152,39 @@ function main(): void {
   bar.addMenu(menu);
   bar.id = 'menubar';
 
-  main.addWidget(createDashboard());
-
   main.addTabRequested.connect(() => {
     main.addWidget(createDashboard());
     main.currentIndex = main.widgets.length - 1;
   });
 
-  window.onresize = () => { main.update(); };
+  let loadFromServer = async () => {
+    let workbook = window.location.hash.substr(1);
+    if (workbook !== '') {
+      let url = `https://jsonblob.com/api/jsonBlob/${workbook}`;
+      try {
+        const response = await fetch(url, /*{ credentials: "include" }*/);
+        const config = await response.json();
+        restoreDashboard(config, main);
+      } catch (error) {
+        window.location.hash = '';
+        console.error(error);
+      };
+    }
+  }
+
+  let workbook = window.location.hash.substr(1);
+  if (workbook !== '') {
+    loadFromServer();
+  } else {
+    main.addWidget(createDashboard());
+  }
 
   Widget.attach(bar, document.body);
   Widget.attach(main, document.body);
+  
+  window.onresize = () => { main.update(); };
+  window.onhashchange = loadFromServer;
+
 }
-
-
 
 window.onload = main;
