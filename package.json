@@ -1,27 +1,48 @@
 {
-  "name": "@datalytica/dashboard",
+  "name": "@datalytica/lumino-widgets",
   "version": "0.1.0",
-  "private": true,
+  "description": "Datalytica Lumino Widgets",
+  "homepage": "https://github.com/datalytica/lumino-widgets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datalytica/lumino-widgets.git"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Naveen Michaud-Agrawal <naveen.michaudagrawal@gmail.com>",
+  "files": [
+    "dist/*",
+    "src/*",
+    "types/*",
+    "style/*.css",
+    "style/index.js"
+  ],
+  "main": "dist/index.js",
+  "unpkg": "dist/index.min.js",
+  "module": "dist/index.es6",
+  "types": "types/index.d.ts",
+  "style": "style/index.css",
   "scripts": {
-    "build": "tsc && webpack",
-    "clean": "rimraf build"
+    "build": "npm run build:src && rollup -c",
+    "build:src": "tsc --build",
+    "build:test": "tsc --build tests && cd tests && webpack",
+    "clean": "rimraf ./lib && rimraf *.tsbuildinfo && rimraf ./types && rimraf ./dist",
+    "clean:test": "rimraf tests/build",
+    "minimize": "terser dist/index.js -c -m --source-map \"content='dist/index.js.map',url='index.min.js.map'\" -o dist/index.min.js"
   },
   "dependencies": {
-    "@lumino/algorithm": "^1.2.3",
-    "@lumino/commands": "^1.10.1",
-    "@lumino/default-theme": "^0.2.4",
-    "@lumino/dragdrop": "^1.5.1",
-    "@lumino/widgets": "^1.11.1"
+    "@lumino/algorithm": "^1.6.0",
+    "@lumino/commands": "^1.15.0",
+    "@lumino/default-theme": "^0.13.0",
+    "@lumino/dragdrop": "^1.10.0",
+    "@lumino/widgets": "^1.22.0"
   },
   "devDependencies": {
-    "css-loader": "^3.4.0",
-    "file-loader": "^2.0.0",
-    "rimraf": "^2.5.2",
-    "style-loader": "^1.0.2",
-    "terser-webpack-plugin": "^1.1.0",
+    "rollup": "^2.22.1",
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rollup-plugin-sourcemaps": "^0.5.0",
+    "rimraf": "^2.6.2",
     "typescript": "~3.6.4",
-    "url-loader": "^1.1.1",
-    "webpack": "^4.41.3",
-    "webpack-cli": "^3.3.10"
-  }
+    "tslib": "1.10.0"
+  }  
 }

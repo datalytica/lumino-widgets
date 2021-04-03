@@ -1,18 +1,30 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "sourceMap": true,
     "declaration": true,
+    "declarationDir": "./types",
+    "declarationMap": true,
     "noImplicitAny": true,
     "noEmitOnError": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "module": "commonjs",
+    "module": "ES6",
     "moduleResolution": "node",
-    "target": "ES6",
-    "outDir": "./lib",
-    "lib": ["ES6", "DOM"],
-    "types": []
+    "target": "ES5",
+    "outDir": "lib",
+    "lib": [
+      "ES5",
+      "ES2015.Collection",
+      "ES2015.Promise",
+      "ES2015.Iterable",
+      "DOM"
+    ],
+    "importHelpers": true,
+    "types": [],
+    "rootDir": "src"
   },
-  "include": ["src/*"]
+  "include": [
+    "src/*"
+  ],
 }
