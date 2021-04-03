@@ -7,46 +7,5 @@
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
 
-@import url("https://fonts.googleapis.com/css?family=Material+Icons|Roboto:100,300,400,500,600");
-
-@import '~@lumino/default-theme/style/menu.css';
-@import '~@lumino/default-theme/style/menubar.css';
-@import '~@lumino/dragdrop/style/index.css';
-@import '~@lumino/widgets/style/index.css';
-
 @import './dashboardpanel.css';
 @import './dockpanel.css';
-
-
-body {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.material-icons.md-small { 
-  font-size: 16px; 
-}
-
-#menubar {
-  flex: 0 0 auto;
-}
-
-#main-widget {
-  flex: 1 1 auto;
-  /*margin: 10px 5px;*/
-  margin-top: 10px;
-}
-
-#main-widget > .lm-StackedPanel {
-  background: white;
-  /*border: 1px solid #C0C0C0;
-  border-top: none;*/
-}

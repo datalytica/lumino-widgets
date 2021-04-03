@@ -484,7 +484,6 @@ class DockPanel extends DockPanel_ {
     // Create the drag image for the drag operation.
     let dragImage = document.createElement('div');
     dragImage.className = 'lm-TabBar-tab lm-mod-drag-image'; 
-    //let dragImage = tab.cloneNode(true) as HTMLElement;
 
     // Create the drag object to manage the drag-drop operation.
     let drag = new Drag({
