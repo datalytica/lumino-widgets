@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@lumino/algorithm": "^1.6.0",
+    "@lumino/coreutils": "^1.8.0",
     "@lumino/commands": "^1.15.0",
     "@lumino/default-theme": "^0.13.0",
     "@lumino/dragdrop": "^1.10.0",

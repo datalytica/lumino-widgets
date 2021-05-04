@@ -23,24 +23,6 @@ import {
 } from './dockpanel';
 
 
-export
-class ContentWidget extends Widget {
-
-  static createNode(): HTMLElement {
-    let node = document.createElement('div');
-    return node;
-  }
-
-  constructor() {
-    super({ node: ContentWidget.createNode() });
-    this.setFlag(Widget.Flag.DisallowLayout);
-    this.addClass('content');
-    this.title.closable = true;
-  }
-}
-
-
-
 /**
  * Specialized implementation of `IRenderer`.
  */
@@ -120,7 +102,7 @@ class DockPanelRenderer implements DockPanel_.IRenderer {
     sender: TabBar<Widget>,
     args: DockPanel.ITabCloneRequestedArgs<Widget>
   ): void {
-    let widget = new ContentWidget();
+    let widget = new Widget();
     this.dock.addWidget(widget, { mode: 'split-right', ref: args.title.owner });
   }
 

@@ -6,6 +6,9 @@
 | The full license is in the file LICENSE, distributed with this software.
 |----------------------------------------------------------------------------*/
 
+import {
+  JSONObject
+} from '@lumino/coreutils'
 
 import {
   each, toArray
@@ -24,7 +27,7 @@ import {
 } from './dashboardpanel';
 
 import {
-  DockPanelRenderer, ContentWidget
+  DockPanelRenderer
 } from './dockpanelrenderer';
 
 
@@ -32,7 +35,7 @@ import {
 /**
  * The restorable description of the application
  */
-export interface IApplicationArea { //extends JSONObject {
+export interface IApplicationArea extends JSONObject {
   /**
    * The type indicator of the serialized application.
    */
@@ -52,7 +55,7 @@ export interface IApplicationArea { //extends JSONObject {
 /**
  * The restorable description of a dashboard area in the user interface.
  */
-export interface IDashboardArea { //extends JSONObject {
+export interface IDashboardArea extends JSONObject {
   /**
    * The type indicator of the serialized dashboard area.
    */
@@ -66,13 +69,13 @@ export interface IDashboardArea { //extends JSONObject {
   /**
    * The widgets in the dashboard area.
    */
-  config: ITabArea | ISplitArea | null;
+  config: ITabArea | ISplitArea;
 }
 
 /**
  * The restorable description of a tab area in the user interface.
  */
-export interface ITabArea { //extends JSONObject {
+export interface ITabArea extends JSONObject {
   /**
    * The type indicator of the serialized tab area.
    */
@@ -81,7 +84,7 @@ export interface ITabArea { //extends JSONObject {
   /**
    * The widgets in the tab area.
    */
-  widgets: Array<IWidget> | null;
+  widgets: Array<IWidget>;
 
   /**
    * The index of the selected tab.
@@ -92,7 +95,7 @@ export interface ITabArea { //extends JSONObject {
 /**
  * The restorable description of a split area in the user interface.
  */
-export interface ISplitArea { //extends JSONObject {
+export interface ISplitArea extends JSONObject {
   /**
    * The type indicator of the serialized split area.
    */
@@ -106,7 +109,7 @@ export interface ISplitArea { //extends JSONObject {
   /**
    * The children in the split area.
    */
-  children: Array<ITabArea | ISplitArea> | null;
+  children: Array<ITabArea | ISplitArea>;
 
   /**
    * The sizes of the children.
@@ -114,7 +117,7 @@ export interface ISplitArea { //extends JSONObject {
   sizes: Array<number>;
 }
 
-export interface IWidget {
+export interface IWidget extends JSONObject {
   /**
    * The title of the widget.
    */
@@ -124,15 +127,15 @@ export interface IWidget {
 export
 function createDashboard(
 ): DockPanel {
-let renderer = new DockPanelRenderer();
-let dock = new DockPanel({
-  renderer: renderer,
-  spacing: 6
-});
-renderer.dock = dock;
+  let renderer = new DockPanelRenderer();
+  let dock = new DockPanel({
+    renderer: renderer,
+    spacing: 6
+  });
+  renderer.dock = dock;
 
-dock.addWidget(new ContentWidget());
-return dock;
+  dock.addWidget(new Widget());
+  return dock;
 }
 
 /**
@@ -242,7 +245,7 @@ function serializeArea(
  */
 export
 function deserializeArea(
-  area: any, //JSONObject,
+  area: JSONObject,
 ): DockPanel.AreaConfig | null {
   if (!area) {
     return null;
