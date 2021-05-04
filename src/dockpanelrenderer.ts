@@ -37,7 +37,8 @@ class DockPanelRenderer implements DockPanel_.IRenderer {
   createTabBar(): TabBar<Widget> {
     let renderer = new TabBarRenderer();
     let bar = new TabBar<Widget>({
-      renderer: renderer
+      renderer: renderer,
+      titlesEditable: true
     });
     bar.addClass('lm-DockPanel-tabBar');
     bar.tabMaximizeRequested.connect(

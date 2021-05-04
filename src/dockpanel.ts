@@ -112,7 +112,6 @@ class TabBarRenderer extends TabBar.Renderer {
       } else {
         return h.li(attrs,
             this.renderMenuIcon(data),
-            this.renderMaximizeIcon(data),
             this.renderFilterIcon(data),
             this.renderSpacer(data),
             //this.renderIcon(data),
