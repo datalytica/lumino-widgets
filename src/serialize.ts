@@ -31,6 +31,21 @@ import {
 } from './dockpanelrenderer';
 
 
+/**
+ * A type alias for a function to serialize a user widget
+ *
+ */
+export
+type SerializeFunc = (widget: Widget) => IWidgetConfiguration;
+
+
+/**
+ * A type alias for a function to deserialize a user widget
+ *
+ */
+export
+type DeserializeFunc = (config: IWidgetConfiguration) => Widget;
+
 
 /**
  * The restorable description of the application
@@ -122,6 +137,16 @@ export interface IWidget extends JSONObject {
    * The title of the widget.
    */
   title: string;
+
+  /**
+   * The configuration of the widget.
+   */
+  configuration: IWidgetConfiguration;
+
+}
+
+export interface IWidgetConfiguration extends JSONObject {
+
 }
 
 export
@@ -134,7 +159,6 @@ function createDashboard(
   });
   renderer.dock = dock;
 
-  dock.addWidget(new Widget());
   return dock;
 }
 
@@ -143,7 +167,8 @@ function createDashboard(
  */
 export
 function serializeDashboard(
-  main: DashboardPanel
+  main: DashboardPanel,
+  serializer: SerializeFunc
 ): IApplicationArea {
   return {
     type: 'application',
@@ -151,7 +176,7 @@ function serializeDashboard(
     dashboards: main.widgets.map(
       (dock: DockPanel) => {
         let layout = dock.saveLayout();
-        let config = serializeArea(layout.main);
+        let config = serializeArea(layout.main, serializer);
 
         return {
           type: "dashboard",
@@ -168,7 +193,8 @@ function serializeDashboard(
 export
 function restoreDashboard(
   config: any,
-  main: DashboardPanel
+  main: DashboardPanel,
+  deserializer: DeserializeFunc
 ): void {
 
   // Because this data is saved to a foreign data source, its type safety is
@@ -194,7 +220,7 @@ function restoreDashboard(
     const { title, config } = dashboard;
     let dock = createDashboard();
     dock.title.label = title;
-    dock.restoreLayout({ main: deserializeArea(config) });
+    dock.restoreLayout({ main: deserializeArea(config, deserializer) });
 
     main.addWidget(dock);
   });
@@ -205,7 +231,8 @@ function restoreDashboard(
  */
 export
 function serializeArea(
-  area: DockPanel.AreaConfig | null
+  area: DockPanel.AreaConfig | null,
+  serializer: SerializeFunc
 ): ITabArea | ISplitArea | null {
   if (!area || !area.type) {
     return null;
@@ -217,8 +244,10 @@ function serializeArea(
       currentIndex: area.currentIndex,
       widgets: area.widgets
         .map((widget: Widget) => {
+          let config = serializer(widget);
           return {
             title: widget.title.label,
+            configuration: config,
           } as IWidget;
         })//nameProperty.get(widget))
         //.filter((name: string) => !!name)
@@ -229,7 +258,8 @@ function serializeArea(
     type: 'split-area',
     orientation: area.orientation,
     sizes: area.sizes,
-    children: area.children.map(serializeArea).filter((area: ITabArea | ISplitArea | null) => !!area)
+    children: area.children.map((config: DockPanel.AreaConfig) => serializeArea(config, serializer))
+                           .filter((area: ITabArea | ISplitArea | null) => !!area)
   } as ISplitArea;
 }
 
@@ -246,6 +276,7 @@ function serializeArea(
 export
 function deserializeArea(
   area: JSONObject,
+  deserializer: DeserializeFunc
 ): DockPanel.AreaConfig | null {
   if (!area) {
     return null;
@@ -268,7 +299,7 @@ function deserializeArea(
         (widgets &&
           (widgets
             .map((config: IWidget) => {
-            	let w = new Widget();
+            	let w = deserializer(config.configuration);
             	w.title.label = config.title;
               return w;
             }) as Widget[])) ||
@@ -291,7 +322,7 @@ function deserializeArea(
     children:
       (children &&
         (children
-          .map(child => deserializeArea(child))
+          .map(child => deserializeArea(child, deserializer))
           .filter(widget => !!widget) as DockPanel.AreaConfig[])) ||
       []
   };
