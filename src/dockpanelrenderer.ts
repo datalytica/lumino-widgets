@@ -18,7 +18,7 @@ import {
 
 import {
   DockPanel,
-  TabBar,
+  TabBarCustom as TabBar,
   TabBarRenderer,
 } from './dockpanel';
 

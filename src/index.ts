@@ -8,4 +8,5 @@
 
 export * from './dashboardpanel';
 export * from './dockpanel';
+export * from './dockpanelrenderer';
 export * from './serialize';

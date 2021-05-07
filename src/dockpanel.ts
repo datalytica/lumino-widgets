@@ -37,14 +37,14 @@ import {
 import {
   DockPanel as DockPanel_,
   DockLayout,
-  TabBar as TabBar_,
+  TabBar,
   Widget,
   Title,
 } from '@lumino/widgets';
 
 
 export
-class TabBarRenderer extends TabBar_.Renderer {
+class TabBarRenderer extends TabBar.Renderer {
 
     /**
      * A selector which matches the maximize icon node in a tab.
@@ -75,15 +75,19 @@ class TabBarRenderer extends TabBar_.Renderer {
      * Render tabs with the default DOM structure, but additionally register a context
      * menu listener.
      */
-    renderTab(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderTab(data: TabBar.IRenderData<any>): VirtualElement {
       let title = data.title.caption;
       let key = this.createTabKey(data);
+      let id = key;
       let style = this.createTabStyle(data);
       let className = this.createTabClass(data);
       let dataset = this.createTabDataset(data);
+      let aria = this.createTabARIA(data);
+
+      let attrs = { id, key, className, title, style, dataset, ...aria };
       if (!this.locked) {
         if (this.maximized) {
-          return h.li({ key, className, title, style, dataset },
+          return h.li(attrs,
             this.renderMenuIcon(data),
             this.renderFilterIcon(data),
             this.renderSpacer(data),
@@ -93,7 +97,7 @@ class TabBarRenderer extends TabBar_.Renderer {
             this.renderMaximizeIcon(data),
           );
         } else {
-          return h.li({ key, className, title, style, dataset },
+          return h.li(attrs,
             this.renderMenuIcon(data),
             this.renderCloneIcon(data),
             this.renderFilterIcon(data),
@@ -106,7 +110,7 @@ class TabBarRenderer extends TabBar_.Renderer {
           );
         }
       } else {
-        return h.li({ key, className, title, style, dataset },
+        return h.li(attrs,
             this.renderMenuIcon(data),
             this.renderMaximizeIcon(data),
             this.renderFilterIcon(data),
@@ -126,7 +130,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns The full class name for the tab.
      */
-    createTabClass(data: TabBar_.IRenderData<any>): string {
+    createTabClass(data: TabBar.IRenderData<any>): string {
       let name = 'lm-TabBar-tab';
       if (data.title.className) {
         name += ` ${data.title.className}`;
@@ -147,7 +151,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the spacer.
      */
-    renderSpacer(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderSpacer(data: TabBar.IRenderData<any>): VirtualElement {
       return h.div({ className: 'lm-TabBar-tabSpacer' });
     }
 
@@ -159,7 +163,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the tab label.
      */
-    renderLabel(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderLabel(data: TabBar.IRenderData<any>): VirtualElement {
       let unset = (this.locked || data.title.label !== '');
       let content = unset ? data.title.label : 'Double-click to edit title';
       let className = 'lm-TabBar-tabLabel' + (unset ? '' : ' unset');
@@ -173,7 +177,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the tab maximize icon.
      */
-    renderMaximizeIcon(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderMaximizeIcon(data: TabBar.IRenderData<any>): VirtualElement {
       let name = 'lm-TabBar-tabMaximizeIcon';
       let content: string;
       let title: string;
@@ -199,7 +203,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the tab menu icon.
      */
-    renderMenuIcon(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderMenuIcon(data: TabBar.IRenderData<any>): VirtualElement {
       return h.div({ className: 'lm-TabBar-tabMenuIcon', title: 'Change Visual' }, 'menu');
     }
 
@@ -210,7 +214,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the tab clone icon.
      */
-    renderFilterIcon(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderFilterIcon(data: TabBar.IRenderData<any>): VirtualElement {
       return h.div({ className: 'lm-TabBar-tabFilterIcon', title: 'Show Quick Filters' }, 'filter_list');
     }
 
@@ -221,7 +225,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the tab clone icon.
      */
-    renderCloneIcon(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderCloneIcon(data: TabBar.IRenderData<any>): VirtualElement {
       return h.div({ className: 'lm-TabBar-tabCloneIcon', title: 'Clone Worksheet' }, 'file_copy');
     }
 
@@ -232,7 +236,7 @@ class TabBarRenderer extends TabBar_.Renderer {
      *
      * @returns A virtual element representing the tab close icon.
      */
-    renderCloseIcon(data: TabBar_.IRenderData<any>): VirtualElement {
+    renderCloseIcon(data: TabBar.IRenderData<any>): VirtualElement {
       return h.div({ className: 'lm-TabBar-tabCloseIcon', title: 'Remove Worksheet' }, 'close');
     }
 
@@ -242,7 +246,7 @@ class TabBarRenderer extends TabBar_.Renderer {
 
 
 export
-class TabBar<T> extends TabBar_<T> {
+class TabBarCustom<T> extends TabBar<T> {
 
   /**
    * A signal emitted when a tab maximize icon is clicked.
@@ -300,63 +304,6 @@ class TabBar<T> extends TabBar_<T> {
     let tabs = this.contentNode.children;
 
     switch (event.type) {
-
-      case 'dblclick': {
-        let ev = event as MouseEvent;
-
-        // Abort if locked
-        if ((this.renderer as TabBarRenderer).locked) {
-          return;
-        }
-
-        // Find the index of the released tab.
-        let index = ArrayExt.findFirstIndex(tabs, tab => {
-          return ElementExt.hitTest(tab, ev.clientX, ev.clientY);
-        });
-
-        let title = this.titles[index];
-        let label = tabs[index].querySelector((this.renderer as TabBarRenderer).labelSelector) as HTMLElement;
-        if (label && label.contains(ev.target as HTMLElement)) {
-
-          let value = title.label || '';
-
-          // Clear the label element
-          let oldValue = label.innerHTML;
-          label.innerHTML = "";
-
-          let input = document.createElement('input');
-          input.classList.add('lm-TabBar-tabInput');
-          input.value = value;
-          label.appendChild(input);
-
-          let onblur = () => {
-            input.removeEventListener('blur', onblur);
-            label.innerHTML = oldValue;
-            title.label = title.caption = input.value;
-          }
-
-          input.addEventListener('dblclick', (event: Event) => event.stopPropagation());
-          input.addEventListener('blur', onblur);
-          input.addEventListener('keydown', (event: KeyboardEvent) => {
-            if (event.key === 'Enter') {
-              if (input.value !== '') {
-                title.label = title.caption = input.value;
-              }
-              onblur();
-            } else if (event.key === 'Escape') {
-              onblur();
-            }
-          });
-          input.select();
-          input.focus();
-
-
-          if (label.children.length > 0) {
-            (label.children[0] as HTMLElement).focus();
-          }
-        }
-      break;
-      }
       case 'mouseup': {
         let ev = event as MouseEvent;
 
@@ -399,23 +346,6 @@ class TabBar<T> extends TabBar_<T> {
     }
     super.handleEvent(event);
   }
-
-  /**
-   * A message handler invoked on a `'before-attach'` message.
-   */
-  protected onBeforeAttach(msg: Message): void {
-    super.onBeforeAttach(msg);
-    this.node.addEventListener('dblclick', this);
-  }
-
-  /**
-   * A message handler invoked on an `'after-detach'` message.
-   */
-  protected onAfterDetach(msg: Message): void {
-    super.onAfterDetach(msg);
-    this.node.removeEventListener('dblclick', this);
-  }
-
 }
 
 
@@ -527,37 +457,6 @@ class DockPanel extends DockPanel_ {
     super.onCloseRequest(msg);
     this.dispose();
   }
-
-  /*protected _createTabBar(): TabBar<Widget> {
-    let tabBar = super._createTabBar() as TabBar<Widget>;
-    tabBar.tabMaximizeRequested.connect(this._onTabMaximizeRequested, this);
-    tabBar.tabsMovable = !this._locked && !this._maximized;
-    (tabBar.renderer as TabBarRenderer).locked = this._locked;
-    (tabBar.renderer as TabBarRenderer).maximized = this._maximized;
-    return tabBar;
-  }*/
-
-  /**
-   * Handle the `tabMaximizeRequested` signal from a tab bar.
-   */
-  /*private _onTabMaximizeRequested(sender: TabBar<Widget>, args: DockPanel.ITabMaximizeRequestedArgs<Widget>): void {
-
-    this._maximized = !this._maximized;
-    if (this._maximized) {
-      this._minimizedLayout = this.saveLayout();
-
-      this.restoreLayout({
-        main: {
-          type: 'tab-area',
-          widgets: [args.title.owner],
-          currentIndex: 0
-        }
-      });
-    } else {
-      this.restoreLayout(this._minimizedLayout as DockPanel_.ILayoutConfig);
-      this._minimizedLayout = null;
-    }
-  }*/
 
   private _locked: boolean = false;
   private _maximized: boolean = false;
